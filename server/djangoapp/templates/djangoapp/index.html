@@ -11,6 +11,16 @@
     <script src="https://unpkg.com/bootstrap-table@1.18.2/dist/bootstrap-table.min.js"></script>
     <script src="https://unpkg.com/bootstrap-table@1.18.2/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"></script>
 
+    <style>
+        form {
+            display: flex;
+            flex-direction: row;
+        }
+        label, input {
+            margin: 10px;
+        }
+    </style>
+
 </head>
 
     <body>
@@ -24,18 +34,30 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ml-auto">
-            <li class="nav-item active">
-              <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+
+            {% if user.is_authenticated %}
+            <li>
+                <a class="btn btn-link" href="#">{{ user.first_name }}({{ user.username }})</a>
+                <a class="btn btn-link" href="{% url 'djangoapp:logout' %}">Logout</a>
             </li>
+            {% else %}
+
+            <form action="{% url 'djangoapp:login' %}" method="post">
+                {% csrf_token %}
+                <label for="text">username:</label><br>
+                <input type="text" id="text" name="username"><br>
+                <label for="pwd">Password:</label><br>
+                <input type="password" id="pwd" name="password"><br>
+                <input type="submit" value="Login">
+            </form>
+
+            {% endif %}
+            
             <li class="nav-item">
               <a class="nav-link" href="{% url 'djangoapp:contact' %}">Contact Us</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Services</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Contact</a>
-            </li>
+            
+            
           </ul>
         </div>
       </nav>
