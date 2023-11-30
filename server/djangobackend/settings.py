@@ -27,7 +27,7 @@ DEBUG = True
 
 APPEND_SLASH = True
 
-ALLOWED_HOSTS = ["localhost"]
+ALLOWED_HOSTS = ["https://anshumaantiw-3000.theiadocker-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai",".localhost",'127.0.0.1']
 
 
 # Application definition
