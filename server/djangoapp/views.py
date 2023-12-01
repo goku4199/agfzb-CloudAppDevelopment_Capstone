@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
-# from .models import related models
+from .models import CarModel
 from .restapis import get_dealers_by_id_from_cf, get_dealers_from_cf, get_dealers_reviews_from_cf
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
@@ -126,4 +126,39 @@ def get_dealer_details(request,dealer_id):
 # Create a `add_review` view to submit a review
 # def add_review(request, dealer_id):
 # ...
+
+def add_review(request, dealer_id):
+    if request.method == "GET":
+        cars = CarModel.objects.filter(dealer_id=dealer_id)
+        context = {
+            "cars": cars,
+            "dealer_id": dealer_id,
+        }
+        return render(request, "djangoapp/add_review.html", context)
+
+    
+    if request.method == "POST":
+        url = "http://127.0.0.1:5000/api/post_review"
+        review = {}
+        input_data = request.POST
+        review["dealership"] = int(dealer_id)
+        review["review"] = input_data["content"]
+        review["purchase"] = input_data.get("purchasecheck", False)
+        review["purchase_date"] = input_data["purchasedate"]
+        car = CarModel.objects.get(pk=input_data["car"])
+        if car:
+            review["car_make"] = car.CarMake.name
+            review["car_model"] = car.name
+            review["car_year"] = car.year.strftime("%Y")
+        else:
+            review["car_make"] = "None"
+            review["car_model"] = "None"
+            review["car_year"] = "None"
+        
+        review["name"] = "name"
+        review["id"] = 1
+        json_payload = {"review": review}
+        print(json_payload)
+        #post_review(url, json_payload)
+        return redirect("djangoapp:dealer_details", dealer_id=dealer_id)
 
