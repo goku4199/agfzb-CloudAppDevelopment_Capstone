@@ -5,6 +5,9 @@ from requests.auth import HTTPBasicAuth
 from .models import CarDealer, DealerReview
 
 
+api_key = "PBUzim7grD8wBmewfwf7Y14ih6PKq69c-Pft7EyefVNT"
+nlu_url = "https://api.au-syd.natural-language-understanding.watson.cloud.ibm.com/instances/11b5b488-924a-43c9-b20b-f276659fd4b2"
+
 # Create a `get_request` to make HTTP GET requests
 # e.g., response = requests.get(url, params=params, headers={'Content-Type': 'application/json'},
 #                                     auth=HTTPBasicAuth('apikey', api_key))
@@ -81,6 +84,8 @@ def get_dealers_from_cf(url, **kwargs):
                                    id=dealer_doc["id"], lat=dealer_doc["lat"], long=dealer_doc["long"],
                                    short_name=dealer_doc["short_name"],
                                    st=dealer_doc["st"], zip=dealer_doc["zip"])
+
+            
             results.append(dealer_obj)
 
     return results
@@ -109,11 +114,27 @@ def get_dealers_reviews_from_cf(url, **kwargs):
             
             
             review_obj = DealerReview(dealership=review_doc["dealership"],name=review_doc["name"],purchase=review_doc["purchase"], review=review_doc["review"],purchase_date=review_doc["purchase_date"], car_make=review_doc["car_make"], car_model=review_doc["car_model"], car_year=review_doc["car_year"],sentiment= "",id=review_doc["id"])
-            
+            review_obj.sentiment = analyze_review_sentiments(review_obj.review)
+            print(review_obj.sentiment)
             reviews.append(review_obj)
 
     return reviews
 
+def analyze_review_sentiments(dealerreview):
+    body = {"text": dealerreview, "features": {"sentiment": {"document": True}}}
+    #print(dealerreview)
+    response = requests.post(
+        nlu_url + "/v1/analyze?version=2019-07-12",
+        headers={"Content-Type": "application/json"},
+        json=body,  # Use json parameter for automatic conversion
+        auth=HTTPBasicAuth("apikey", api_key),
+    )
 
+    # Check if request was successful
+    if response.status_code == 200:
+        sentiment = response.json()["sentiment"]["document"]["label"]
+        return sentiment
+    return "N/A"
+    
 
-
+ 
