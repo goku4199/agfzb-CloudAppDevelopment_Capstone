@@ -2,7 +2,7 @@ import requests
 import json
 # import related models here
 from requests.auth import HTTPBasicAuth
-from .models import CarDealer
+from .models import CarDealer, DealerReview
 
 
 # Create a `get_request` to make HTTP GET requests
@@ -74,6 +74,7 @@ def get_dealers_from_cf(url, **kwargs):
         # For each dealer object
         for dealer_doc in dealers:
             # Get its content in `doc` object
+            print(dealer_doc)
             
             # Create a CarDealer object with values in `doc` object
             dealer_obj = CarDealer(address=dealer_doc["address"], city=dealer_doc["city"], full_name=dealer_doc["full_name"],
@@ -89,6 +90,30 @@ def get_dealers_from_cf(url, **kwargs):
 # def analyze_review_sentiments(text):
 # - Call get_request() with specified arguments
 # - Get the returned sentiment label such as Positive or Negative
+
+def get_dealers_reviews_from_cf(url, **kwargs):
+    reviews = []
+    # Call get_request with a URL parameter
+    json_result = get_request(url,id=kwargs["dealer_id"])
+    print(json_result)
+    if json_result:
+        # Get the row list in JSON as dealers
+        reviews_list = json_result
+        #print(reviews)
+        # For each dealer object
+        for review_doc in reviews_list:
+            # Get its content in `doc` object
+            
+            # Create a CarDealer object with values in `doc` object
+            #print(review_doc)
+            
+            
+            review_obj = DealerReview(dealership=review_doc["dealership"],name=review_doc["name"],purchase=review_doc["purchase"], review=review_doc["review"],purchase_date=review_doc["purchase_date"], car_make=review_doc["car_make"], car_model=review_doc["car_model"], car_year=review_doc["car_year"],sentiment= "",id=review_doc["id"])
+            
+            reviews.append(review_obj)
+
+    return reviews
+
 
 
 
