@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
 from .models import CarModel
-from .restapis import get_dealers_by_id_from_cf, get_dealers_from_cf, get_dealers_reviews_from_cf
+from .restapis import get_dealers_by_id_from_cf, get_dealers_from_cf, get_dealers_reviews_from_cf, post_review
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
@@ -159,6 +159,6 @@ def add_review(request, dealer_id):
         review["id"] = 1
         json_payload = {"review": review}
         print(json_payload)
-        #post_review(url, json_payload)
+        post_review(url, json_payload)
         return redirect("djangoapp:dealer_details", dealer_id=dealer_id)
 

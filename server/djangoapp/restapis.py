@@ -136,6 +136,19 @@ def analyze_review_sentiments(dealerreview):
         return sentiment
     return "N/A"
     
+def post_review(url, json_payload):
+    
+
+    # Make the POST request
+    response = requests.post(url,headers={"Content-Type": "application/json"} ,json=json_payload)
+
+    # Check the response status
+    if (response.status_code == 200 or response.status_code == 201):
+        print("POST request successful!")
+        print("Response:", response.text)
+    else:
+        print(f"POST request failed with status code {response.status_code}")
+        print("Error:", response.text)
 
  
 
